@@ -3,12 +3,12 @@ import { Volume2, VolumeX } from "lucide-react";
 
 const MusicToggle = ({ shouldPlay }: { shouldPlay: boolean }) => {
   const [playing, setPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Use a royalty-free romantic piano piece placeholder
     const audio = new Audio();
-    // We'll use a silent approach - user can add their own music file
+    // Replace with your own music file URL
     audioRef.current = audio;
     audio.loop = true;
     audio.volume = 0.3;
@@ -19,11 +19,18 @@ const MusicToggle = ({ shouldPlay }: { shouldPlay: boolean }) => {
     };
   }, []);
 
+  // Start music only when shouldPlay transitions to true (after tap)
   useEffect(() => {
-    if (shouldPlay && audioRef.current && !playing) {
-      audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
+    if (shouldPlay && !hasStarted && audioRef.current) {
+      audioRef.current
+        .play()
+        .then(() => {
+          setPlaying(true);
+          setHasStarted(true);
+        })
+        .catch(() => {});
     }
-  }, [shouldPlay]);
+  }, [shouldPlay, hasStarted]);
 
   const toggle = () => {
     if (!audioRef.current) return;
@@ -34,6 +41,8 @@ const MusicToggle = ({ shouldPlay }: { shouldPlay: boolean }) => {
       audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
     }
   };
+
+  if (!shouldPlay) return null;
 
   return (
     <button
