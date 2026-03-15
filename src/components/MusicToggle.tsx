@@ -7,19 +7,18 @@ const MusicToggle = ({ shouldPlay }: { shouldPlay: boolean }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const audio = new Audio();
-    // Replace with your own music file URL
-    audioRef.current = audio;
+    const audio = new Audio("/new wedding nasheed.mpeg"); // set audio source here
     audio.loop = true;
-    audio.volume = 0.3;
+    audio.volume = 0.2;
+
+    audioRef.current = audio;
 
     return () => {
       audio.pause();
-      audio.src = "";
     };
   }, []);
 
-  // Start music only when shouldPlay transitions to true (after tap)
+  // Start music after tap
   useEffect(() => {
     if (shouldPlay && !hasStarted && audioRef.current) {
       audioRef.current
@@ -34,6 +33,7 @@ const MusicToggle = ({ shouldPlay }: { shouldPlay: boolean }) => {
 
   const toggle = () => {
     if (!audioRef.current) return;
+
     if (playing) {
       audioRef.current.pause();
       setPlaying(false);

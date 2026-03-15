@@ -1,13 +1,36 @@
 import { useState, useEffect } from "react";
 
-const WEDDING_DATE = new Date("2025-12-20T18:00:00");
-
 const CountdownTimer = ({ visible }: { visible: boolean }) => {
-  const [time, setTime] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  // Generate random future time (1–30 days)
+  const generateRandomDate = () => {
+    const now = Date.now();
+    const randomDays = Math.floor(Math.random() * 30) + 1;
+    const randomHours = Math.floor(Math.random() * 24);
+    const randomMinutes = Math.floor(Math.random() * 60);
+    const randomSeconds = Math.floor(Math.random() * 60);
+
+    return (
+      now +
+      randomDays * 86400000 +
+      randomHours * 3600000 +
+      randomMinutes * 60000 +
+      randomSeconds * 1000
+    );
+  };
+
+  const [targetDate] = useState(generateRandomDate());
+  const [time, setTime] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   useEffect(() => {
     const tick = () => {
-      const diff = Math.max(0, WEDDING_DATE.getTime() - Date.now());
+      const diff = Math.max(0, targetDate - Date.now());
+
       setTime({
         days: Math.floor(diff / 86400000),
         hours: Math.floor((diff % 86400000) / 3600000),
@@ -15,10 +38,11 @@ const CountdownTimer = ({ visible }: { visible: boolean }) => {
         seconds: Math.floor((diff % 60000) / 1000),
       });
     };
+
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [targetDate]);
 
   if (!visible) return null;
 
@@ -38,6 +62,7 @@ const CountdownTimer = ({ visible }: { visible: boolean }) => {
         >
           Counting Down
         </h2>
+
         <div
           className="grid grid-cols-4 gap-3 animate-fade-up"
           style={{ animationDelay: "2.5s", opacity: 0 }}
@@ -47,6 +72,7 @@ const CountdownTimer = ({ visible }: { visible: boolean }) => {
               <span className="font-heading text-3xl sm:text-4xl text-primary block">
                 {String(u.value).padStart(2, "0")}
               </span>
+
               <span className="font-serif text-xs tracking-[0.2em] uppercase text-muted-foreground mt-1 block">
                 {u.label}
               </span>

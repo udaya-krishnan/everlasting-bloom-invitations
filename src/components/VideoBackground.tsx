@@ -1,9 +1,20 @@
+import { useRef, useEffect } from "react";
+
 const VideoBackground = ({ visible }: { visible: boolean }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.4; // slow motion (0.5 = half speed)
+    }
+  }, []);
+
   if (!visible) return null;
 
   return (
     <div className="fixed inset-0 z-0">
       <video
+        ref={videoRef}
         autoPlay
         muted
         loop
@@ -13,6 +24,7 @@ const VideoBackground = ({ visible }: { visible: boolean }) => {
       >
         <source src="/wedding-bg.mp4" type="video/mp4" />
       </video>
+
       {/* Gradient overlay */}
       <div
         className="absolute inset-0"
